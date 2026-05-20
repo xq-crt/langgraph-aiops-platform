@@ -1,0 +1,14 @@
+{"id": "host-1", "query": "我电脑很卡，帮我看下是不是 CPU 或内存太高", "expected_skill": "host_resource_diagnosis", "must_contain_keywords": ["CPU", "内存"]}
+{"id": "host-2", "query": "本机内存使用率 92%，浏览器和 IDE 都很慢", "expected_skill": "host_resource_diagnosis", "must_contain_keywords": ["内存"]}
+{"id": "host-3", "query": "Windows 笔记本风扇一直响，load average 很高", "expected_skill": "host_resource_diagnosis", "must_contain_keywords": ["CPU"]}
+{"id": "net-1", "query": "生产 API 网关 api.example.com 返回 502，帮我查连通性和 DNS", "expected_skill": "network_diagnosis", "must_contain_keywords": ["502", "DNS"]}
+{"id": "net-2", "query": "用户反馈网站打不开，ping 和 http 检查都要做", "expected_skill": "network_diagnosis", "must_contain_keywords": ["ping"]}
+{"id": "container-1", "query": "Docker 容器 payment-api 一直 Restarting，帮我看日志和配置", "expected_skill": "container_diagnosis", "must_contain_keywords": ["容器", "Restart"]}
+{"id": "container-2", "query": "k8s pod 对应的 docker 容器 OOMKilled，查 stats 和 inspect", "expected_skill": "container_diagnosis", "must_contain_keywords": ["OOM"]}
+{"id": "oncall-1", "query": "凌晨批量任务失败，没有明确是 CPU 还是网络，按 OnCall 流程排查", "expected_skill": "generic_oncall", "must_contain_keywords": ["建议"]}
+{"id": "oncall-2", "query": "未知告警 ALERT-UNKNOWN-42，实例 prod-worker-03，请通用排查", "expected_skill": "generic_oncall", "must_contain_keywords": ["排查"]}
+{"id": "disk-1", "query": "C 盘只剩 8%，帮我扫描哪些目录占用大并给出清理建议", "expected_skill": "disk_cleanup_diagnosis", "must_contain_keywords": ["GB", "清理", "建议"]}
+{"id": "disk-2", "query": "D 盘空间不足，找出最大的文件夹和大文件，不要自动删除", "expected_skill": "disk_cleanup_diagnosis", "must_contain_keywords": ["目录", "建议"]}
+{"id": "disk-3", "query": "释放 C 盘空间，扫描磁盘大文件占用", "expected_skill": "disk_cleanup_diagnosis", "must_contain_keywords": ["磁盘"]}
+{"id": "host-disk-boundary", "query": "磁盘分区使用率 95% 告警，先确认是不是满了", "expected_skill": "host_resource_diagnosis", "must_contain_keywords": ["磁盘", "%"]}
+{"id": "net-3", "query": "TCP 443 端口不通，从本机检查到 payment.internal 的连通性", "expected_skill": "network_diagnosis", "must_contain_keywords": ["端口"]}

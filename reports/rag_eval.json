@@ -1,0 +1,310 @@
+{
+  "run_at": "2026-05-20T06:58:57.054482+00:00",
+  "vector_only": {
+    "hybrid_enabled": false,
+    "queries": 24,
+    "R_at_1": 0.7083,
+    "R_at_3": 0.75,
+    "MRR": 0.7396,
+    "details": [
+      {
+        "query": "Redis 内存使用率过高怎么办",
+        "needle": "redis",
+        "hit_rank": 1,
+        "top_source": "redis_oncall_sop.md"
+      },
+      {
+        "query": "MySQL 主从复制延迟",
+        "needle": "mysql",
+        "hit_rank": 1,
+        "top_source": "mysql_oncall_sop.md"
+      },
+      {
+        "query": "CPU 使用率持续高于 80",
+        "needle": "cpu",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0042__host-and-hardware__host-high-cpu-load.md"
+      },
+      {
+        "query": "磁盘空间不足 No space left",
+        "needle": "disk",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0035__host-and-hardware__host-out-of-disk-space.md"
+      },
+      {
+        "query": "OOMKilled 容器重启",
+        "needle": "oom",
+        "hit_rank": 2,
+        "top_source": "common_alerts.md"
+      },
+      {
+        "query": "Prometheus Alertmanager 配置重载失败",
+        "needle": "alertmanager",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0008__prometheus-self-monitoring__prometheus-alertmanager-configuration-reload-failure.md"
+      },
+      {
+        "query": "HTTP 502 Bad Gateway 排查",
+        "needle": "502",
+        "hit_rank": null,
+        "top_source": "awesome-prometheus-alerts/0397__haproxy__haproxy-high-http-5xx-error-rate-backend.md"
+      },
+      {
+        "query": "DNS 解析失败",
+        "needle": "dns",
+        "hit_rank": null,
+        "top_source": "awesome-prometheus-alerts/0946__graph-node__provider-failed-because-net-version-failed.md"
+      },
+      {
+        "query": "Docker 容器一直重启",
+        "needle": "docker",
+        "hit_rank": 4,
+        "top_source": "common_alerts.md"
+      },
+      {
+        "query": "Windows 事件日志蓝屏",
+        "needle": "windows",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0107__windows-server__windows-server-collector-error.md"
+      },
+      {
+        "query": "连接数过多 too many connections",
+        "needle": "connection",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0238__mongodb__mongodb-too-many-connections-dcu.md"
+      },
+      {
+        "query": "inode 用尽",
+        "needle": "inode",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0037__host-and-hardware__host-out-of-inodes.md"
+      },
+      {
+        "query": "负载过高 load average",
+        "needle": "load",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0042__host-and-hardware__host-high-cpu-load.md"
+      },
+      {
+        "query": "网络丢包 ping",
+        "needle": "packet",
+        "hit_rank": null,
+        "top_source": "awesome-prometheus-alerts/0106__blackbox__blackbox-probe-slow-ping.md"
+      },
+      {
+        "query": "日志磁盘占满",
+        "needle": "log",
+        "hit_rank": null,
+        "top_source": "awesome-prometheus-alerts/0035__host-and-hardware__host-out-of-disk-space.md"
+      },
+      {
+        "query": "JVM 堆内存溢出",
+        "needle": "heap",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0467__jvm__jvm-non-heap-memory-filling-up.md"
+      },
+      {
+        "query": "证书过期 TLS",
+        "needle": "certificate",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0668__ssltls__ssl-certificate-expiry-7-days.md"
+      },
+      {
+        "query": "Kafka 消费延迟 lag",
+        "needle": "kafka",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0366__kafka__kafka-consumer-lag.md"
+      },
+      {
+        "query": "Elasticsearch 集群 red",
+        "needle": "elastic",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0244__elasticsearch__elasticsearch-cluster-red.md"
+      },
+      {
+        "query": "Postgres 连接池耗尽",
+        "needle": "postgres",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0174__postgresql__postgresql-not-enough-connections.md"
+      },
+      {
+        "query": "Nginx 502 upstream",
+        "needle": "nginx",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0391__nginx__nginx-high-http-5xx-error-rate.md"
+      },
+      {
+        "query": "磁盘清理临时文件",
+        "needle": "temp",
+        "hit_rank": null,
+        "top_source": "disk_cleanup_sop.md"
+      },
+      {
+        "query": "内存泄漏排查步骤",
+        "needle": "memory",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0486__golang__go-memory-leak.md"
+      },
+      {
+        "query": "告警风暴 alert storm",
+        "needle": "alert",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0911__grafana-alloy__grafana-alloy-service-down.md"
+      }
+    ]
+  },
+  "hybrid": {
+    "hybrid_enabled": true,
+    "queries": 24,
+    "R_at_1": 0.7083,
+    "R_at_3": 0.75,
+    "MRR": 0.7396,
+    "details": [
+      {
+        "query": "Redis 内存使用率过高怎么办",
+        "needle": "redis",
+        "hit_rank": 1,
+        "top_source": "redis_oncall_sop.md"
+      },
+      {
+        "query": "MySQL 主从复制延迟",
+        "needle": "mysql",
+        "hit_rank": 1,
+        "top_source": "mysql_oncall_sop.md"
+      },
+      {
+        "query": "CPU 使用率持续高于 80",
+        "needle": "cpu",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0042__host-and-hardware__host-high-cpu-load.md"
+      },
+      {
+        "query": "磁盘空间不足 No space left",
+        "needle": "disk",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0035__host-and-hardware__host-out-of-disk-space.md"
+      },
+      {
+        "query": "OOMKilled 容器重启",
+        "needle": "oom",
+        "hit_rank": 2,
+        "top_source": "common_alerts.md"
+      },
+      {
+        "query": "Prometheus Alertmanager 配置重载失败",
+        "needle": "alertmanager",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0008__prometheus-self-monitoring__prometheus-alertmanager-configuration-reload-failure.md"
+      },
+      {
+        "query": "HTTP 502 Bad Gateway 排查",
+        "needle": "502",
+        "hit_rank": null,
+        "top_source": "awesome-prometheus-alerts/0397__haproxy__haproxy-high-http-5xx-error-rate-backend.md"
+      },
+      {
+        "query": "DNS 解析失败",
+        "needle": "dns",
+        "hit_rank": null,
+        "top_source": "awesome-prometheus-alerts/0946__graph-node__provider-failed-because-net-version-failed.md"
+      },
+      {
+        "query": "Docker 容器一直重启",
+        "needle": "docker",
+        "hit_rank": 4,
+        "top_source": "common_alerts.md"
+      },
+      {
+        "query": "Windows 事件日志蓝屏",
+        "needle": "windows",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0107__windows-server__windows-server-collector-error.md"
+      },
+      {
+        "query": "连接数过多 too many connections",
+        "needle": "connection",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0238__mongodb__mongodb-too-many-connections-dcu.md"
+      },
+      {
+        "query": "inode 用尽",
+        "needle": "inode",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0037__host-and-hardware__host-out-of-inodes.md"
+      },
+      {
+        "query": "负载过高 load average",
+        "needle": "load",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0042__host-and-hardware__host-high-cpu-load.md"
+      },
+      {
+        "query": "网络丢包 ping",
+        "needle": "packet",
+        "hit_rank": null,
+        "top_source": "awesome-prometheus-alerts/0106__blackbox__blackbox-probe-slow-ping.md"
+      },
+      {
+        "query": "日志磁盘占满",
+        "needle": "log",
+        "hit_rank": null,
+        "top_source": "awesome-prometheus-alerts/0035__host-and-hardware__host-out-of-disk-space.md"
+      },
+      {
+        "query": "JVM 堆内存溢出",
+        "needle": "heap",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0467__jvm__jvm-non-heap-memory-filling-up.md"
+      },
+      {
+        "query": "证书过期 TLS",
+        "needle": "certificate",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0668__ssltls__ssl-certificate-expiry-7-days.md"
+      },
+      {
+        "query": "Kafka 消费延迟 lag",
+        "needle": "kafka",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0366__kafka__kafka-consumer-lag.md"
+      },
+      {
+        "query": "Elasticsearch 集群 red",
+        "needle": "elastic",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0244__elasticsearch__elasticsearch-cluster-red.md"
+      },
+      {
+        "query": "Postgres 连接池耗尽",
+        "needle": "postgres",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0174__postgresql__postgresql-not-enough-connections.md"
+      },
+      {
+        "query": "Nginx 502 upstream",
+        "needle": "nginx",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0391__nginx__nginx-high-http-5xx-error-rate.md"
+      },
+      {
+        "query": "磁盘清理临时文件",
+        "needle": "temp",
+        "hit_rank": null,
+        "top_source": "disk_cleanup_sop.md"
+      },
+      {
+        "query": "内存泄漏排查步骤",
+        "needle": "memory",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0486__golang__go-memory-leak.md"
+      },
+      {
+        "query": "告警风暴 alert storm",
+        "needle": "alert",
+        "hit_rank": 1,
+        "top_source": "awesome-prometheus-alerts/0911__grafana-alloy__grafana-alloy-service-down.md"
+      }
+    ]
+  },
+  "note": "needle 为 source 路径子串匹配；需 Milvus 已 ingest"
+}

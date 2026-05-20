@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangGraph AIOps Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css?v=20260519-kb-pagination">
+</head>
+<body class="app-shell">
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <h1>LangGraph AIOps</h1>
+        <p>智能运维 · LangGraph + RAG + MCP</p>
+    </div>
+    <nav class="sidebar-nav">
+        <button type="button" data-tab="overview" class="tab-btn">
+            <span aria-hidden="true">📊</span>
+            <span class="label">概览大盘</span>
+        </button>
+        <button type="button" data-tab="aiops" class="tab-btn tab-active">
+            <span aria-hidden="true">⚡</span>
+            <span class="label">AIOps 诊断</span>
+        </button>
+        <button type="button" data-tab="documents" class="tab-btn">
+            <span aria-hidden="true">📚</span>
+            <span class="label">知识库</span>
+        </button>
+    </nav>
+    <div class="sidebar-footer">
+        <span id="health-dot" class="status-warn"></span>
+        <span id="health-text">检查中...</span>
+    </div>
+</aside>
+
+<main class="main">
+    <header class="page-header">
+        <div>
+            <h2 id="page-title">AIOps 诊断</h2>
+            <p id="page-subtitle">Skill-first 多智能体故障排查</p>
+        </div>
+    </header>
+
+    <div class="page-body">
+
+        <!-- ====================== Overview ====================== -->
+        <section id="tab-overview" class="tab-pane hidden">
+            <div class="dashboard-grid">
+                <div class="metrics-row dashboard-stats">
+                    <div class="metric-card metric-card--neutral">
+                        <div class="metric-label">知识库文档</div>
+                        <div id="dash-doc-count" class="metric-value">—</div>
+                        <div class="metric-sub">已索引</div>
+                    </div>
+                    <div class="metric-card metric-card--accent">
+                        <div class="metric-label">Milvus</div>
+                        <div id="dash-milvus" class="metric-value" style="font-size:0.85rem;">—</div>
+                        <div id="dash-collection" class="metric-sub">collection</div>
+                    </div>
+                    <div class="metric-card metric-card--success">
+                        <div class="metric-label">MCP 工具</div>
+                        <div id="dash-mcp-tools" class="metric-value">—</div>
+                        <div id="dash-mcp-status" class="metric-sub">—</div>
+                    </div>
+                    <div class="metric-card metric-card--warn">
+                        <div class="metric-label">Webhook 诊断</div>
+                        <div id="dash-alert-count" class="metric-value">—</div>
+                        <div class="metric-sub">最近记录</div>
+                    </div>
+                </div>
+
+                <div class="dep-row">
+                    <div id="dep-milvus" class="dep-card">
+                        <span class="dep-name">Milvus</span>
+                        <span class="dep-status muted">检查中</span>
+                    </div>
+                    <div id="dep-mcp" class="dep-card">
+                        <span class="dep-name">MCP</span>
+                        <span class="dep-status muted">检查中</span>
+                    </div>
+                    <div id="dep-redis" class="dep-card">
+                        <span class="dep-name">Redis</span>
+                        <span id="dep-redis-hint" class="dep-status muted">会话记忆</span>
+                    </div>
+                </div>
+
+                <p id="dash-host-sub" class="dash-host-line muted">本机资源加载中...</p>
+
+                <div class="gauge-row">
+                    <div class="chart-panel">
+                        <div class="gauge-head"><span>CPU</span><strong id="dash-cpu-pct">—</strong></div>
+                        <div class="chart-canvas-wrap"><canvas id="chart-cpu-gauge"></canvas></div>
+                    </div>
+                    <div class="chart-panel">
+                        <div class="gauge-head"><span>内存</span><strong id="dash-mem-pct">—</strong></div>
+                        <div class="chart-canvas-wrap"><canvas id="chart-mem-gauge"></canvas></div>
+                        <div id="dash-mem-sub" class="gauge-foot muted">—</div>
+                    </div>
+                    <div class="chart-panel">
+                        <div class="gauge-head"><span>磁盘</span><strong id="dash-disk-pct">—</strong></div>
+                        <div class="chart-canvas-wrap"><canvas id="chart-disk-gauge"></canvas></div>
+                        <div id="dash-disk-sub" class="gauge-foot muted">—</div>
+                    </div>
+                </div>
+
+                <div class="charts-row-2">
+                    <div class="chart-panel chart-panel--wide">
+                        <div class="chart-canvas-wrap chart-canvas-wrap--tall"><canvas id="chart-host-trend"></canvas></div>
+                    </div>
+                    <div class="chart-panel chart-panel--wide">
+                        <div class="chart-canvas-wrap chart-canvas-wrap--tall"><canvas id="chart-alert-bar"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="chart-panel">
+                    <p class="panel-title">最近 Webhook 自动诊断</p>
+                    <div id="dash-recent-alerts" class="scroll-box" style="max-height:160px;">
+                        <span class="muted">加载中...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================== AIOps ====================== -->
+        <section id="tab-aiops" class="tab-pane aiops-page report-docked">
+
+            <div class="aiops-top">
+                <div id="aiops-incident-strip" class="aiops-incident-strip" data-running="false">
+                    <div class="aiops-incident-row">
+                        <div class="aiops-incident-input">
+                            <label class="label" for="aiops-query">告警 / 故障描述</label>
+                            <textarea id="aiops-query" class="textarea" rows="2"
+                                placeholder="描述现象、实例、持续时间...">我的电脑内存占用居高, 系统明显卡顿, 怎么回事</textarea>
+                        </div>
+                        <div class="aiops-incident-actions">
+                            <button type="button" id="aiops-start" class="btn-primary btn-primary--aiops">开始诊断</button>
+                            <button type="button" id="aiops-stop" class="btn-ghost" disabled>停止</button>
+                            <span id="aiops-status" class="aiops-status-pill" data-status="idle">未开始</span>
+                        </div>
+                    </div>
+                </div>
+
+                <nav id="aiops-phase" class="aiops-phase" aria-label="诊断阶段" data-phase="idle">
+                    <div class="aiops-phase-item">
+                        <span class="aiops-phase-dot" aria-hidden="true">01</span>
+                        <span class="aiops-phase-step" data-phase-step="router">Skill 路由</span>
+                    </div>
+                    <span class="aiops-phase-connector" aria-hidden="true"></span>
+                    <div class="aiops-phase-item">
+                        <span class="aiops-phase-dot" aria-hidden="true">02</span>
+                        <span class="aiops-phase-step" data-phase-step="plan">诊断计划</span>
+                    </div>
+                    <span class="aiops-phase-connector" aria-hidden="true"></span>
+                    <div class="aiops-phase-item">
+                        <span class="aiops-phase-dot" aria-hidden="true">03</span>
+                        <span class="aiops-phase-step" data-phase-step="execute">执行</span>
+                    </div>
+                    <span class="aiops-phase-connector" aria-hidden="true"></span>
+                    <div class="aiops-phase-item">
+                        <span class="aiops-phase-dot" aria-hidden="true">04</span>
+                        <span class="aiops-phase-step" data-phase-step="report">报告</span>
+                    </div>
+                </nav>
+            </div>
+
+            <div class="aiops-workspace">
+                <div class="aiops-column aiops-column--pipeline">
+                    <div class="aiops-module" data-module="skill">
+                        <div class="aiops-module-head">
+                            <h3>Skill 路由 <span id="skill-count" class="aiops-module-meta"></span></h3>
+                            <div class="aiops-module-head-right">
+                                <div id="skill-selected-banner" class="hidden aiops-skill-banner">
+                                    <span>本次:</span>
+                                    <span id="skill-selected-name"></span>
+                                </div>
+                                <button type="button" class="aiops-module-toggle" aria-expanded="true" title="收起 Skill 路由">
+                                    <span class="aiops-toggle-chevron" aria-hidden="true"></span>
+                                    <span class="aiops-toggle-text">收起</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="aiops-module-body">
+                            <div id="skill-list" class="skill-grid">
+                                <span class="aiops-empty">加载中...</span>
+                            </div>
+                            <div id="skill-reason" class="hidden"></div>
+                        </div>
+                    </div>
+
+                    <div class="aiops-module" data-module="plan">
+                        <div class="aiops-module-head">
+                            <h3>诊断计划</h3>
+                            <button type="button" class="aiops-module-toggle" aria-expanded="true" title="收起诊断计划" aria-controls="aiops-plan-panel">
+                                <span class="aiops-toggle-chevron" aria-hidden="true"></span>
+                                <span class="aiops-toggle-text">收起</span>
+                            </button>
+                        </div>
+                        <div class="aiops-module-body" id="aiops-plan-panel">
+                            <div id="aiops-plan" class="scroll-box aiops-plan-box aiops-inset-scroll">
+                                <span class="aiops-empty">点击「开始诊断」生成计划...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aiops-module aiops-module--grow" data-module="steps">
+                        <div class="aiops-module-head">
+                            <h3>执行时间线</h3>
+                        </div>
+                        <div class="aiops-module-body aiops-module-body--fill">
+                            <div id="aiops-steps" class="scroll-box aiops-steps-box aiops-timeline aiops-inset-scroll">
+                                <span class="aiops-empty">等待开始...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="aiops-column aiops-column--observe">
+                    <div class="aiops-observe-head">
+                        <h3><span id="aiops-right-title">运行监控</span></h3>
+                    </div>
+                    <div id="aiops-monitor" class="aiops-observe-body">
+                        <div class="aiops-module aiops-module--compact" data-module="metrics">
+                            <div class="aiops-module-head">
+                                <h3>实时指标</h3>
+                            </div>
+                            <div class="aiops-module-body aiops-module-body--tight">
+                                <div class="aiops-stat-strip">
+                                    <div class="aiops-stat aiops-stat--focus">
+                                        <div class="aiops-stat-label">当前步骤</div>
+                                        <div id="mon-step" class="aiops-stat-value">—</div>
+                                        <div id="mon-step-label" class="aiops-stat-sub">等待启动</div>
+                                    </div>
+                                    <div class="aiops-stat aiops-stat--elapsed">
+                                        <div class="aiops-stat-label">耗时</div>
+                                        <div id="mon-elapsed" class="aiops-stat-value">0.0s</div>
+                                        <div class="aiops-stat-sub">自诊断开始</div>
+                                    </div>
+                                    <div class="aiops-stat aiops-stat--tools" id="mon-tools-stat">
+                                        <div class="aiops-stat-label">工具调用</div>
+                                        <div id="mon-tools" class="aiops-stat-value">0</div>
+                                        <div id="mon-tools-ok" class="aiops-stat-sub aiops-stat-ok">成功 0</div>
+                                        <div id="mon-tools-fail" class="aiops-stat-sub aiops-stat-fail">失败 0</div>
+                                    </div>
+                                    <div class="aiops-stat aiops-stat--tokens">
+                                        <div class="aiops-stat-label">
+                                            Tokens
+                                            <span id="mon-tokens-badge" class="metric-badge">~估算</span>
+                                        </div>
+                                        <div id="mon-tokens" class="aiops-stat-value">0</div>
+                                        <div id="mon-tokens-detail" class="aiops-stat-sub" title="">输入 0 · 输出 0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="aiops-module aiops-module--secondary" data-module="charts">
+                            <div class="aiops-module-head">
+                                <h3>实时图表</h3>
+                                <button type="button" class="aiops-module-toggle" aria-expanded="true" title="收起实时图表">
+                                    <span class="aiops-toggle-chevron" aria-hidden="true"></span>
+                                    <span class="aiops-toggle-text">收起</span>
+                                </button>
+                            </div>
+                            <div class="aiops-module-body">
+                                <div class="charts-row charts-row--aiops">
+                                    <div class="chart-panel aiops-chart-panel">
+                                        <div class="chart-panel-head">
+                                            <span class="chart-panel-title">Token 消耗</span>
+                                            <span class="chart-panel-meta">累计</span>
+                                        </div>
+                                        <div class="chart-canvas-wrap chart-canvas-wrap--aiops chart-canvas-wrap--inset"><canvas id="chart-aiops-tokens"></canvas></div>
+                                    </div>
+                                    <div class="chart-panel aiops-chart-panel">
+                                        <div class="chart-panel-head">
+                                            <span class="chart-panel-title">工具调用</span>
+                                            <span class="chart-panel-meta">成功/失败</span>
+                                        </div>
+                                        <div class="chart-canvas-wrap chart-canvas-wrap--aiops chart-canvas-wrap--inset"><canvas id="chart-aiops-tools-pie"></canvas></div>
+                                    </div>
+                                    <div class="chart-panel aiops-chart-panel">
+                                        <div class="chart-panel-head">
+                                            <span class="chart-panel-title">最近耗时</span>
+                                            <span class="chart-panel-meta">ms</span>
+                                        </div>
+                                        <div class="chart-canvas-wrap chart-canvas-wrap--aiops chart-canvas-wrap--inset"><canvas id="chart-aiops-tools-bar"></canvas></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="aiops-module aiops-module--grow aiops-module--primary" data-module="live">
+                            <div class="aiops-module-head aiops-live-tabs-head">
+                                <div class="aiops-live-segmented" role="tablist">
+                                    <span class="aiops-live-segmented-indicator" id="live-tab-indicator" aria-hidden="true"></span>
+                                    <button type="button" id="live-tab-stream" class="live-tab live-tab-active" role="tab">运行日志</button>
+                                    <button type="button" id="live-tab-tools" class="live-tab" role="tab">工具流水</button>
+                                </div>
+                                <span id="mon-stream-hint" class="aiops-live-hint">等待中</span>
+                            </div>
+                            <div class="aiops-module-body aiops-module-body--fill aiops-live-panes">
+                                <div id="mon-stream" class="aiops-live-pane">
+                                    <span class="aiops-empty">诊断开始后，模型输出会显示在此...</span>
+                                </div>
+                                <div id="mon-tool-feed" class="aiops-live-pane hidden">
+                                    <span class="aiops-empty">暂无工具调用</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="aiops-report-split" class="aiops-report-split">
+                <div id="aiops-report-resize" class="aiops-report-resize" title="拖动调整报告区高度"></div>
+                <div class="aiops-module" data-module="report">
+                    <div class="aiops-module-head">
+                        <h3>诊断报告</h3>
+                        <button type="button" id="aiops-report-collapse" class="aiops-module-toggle" aria-expanded="true" title="收起诊断报告">
+                            <span class="aiops-toggle-chevron" aria-hidden="true"></span>
+                            <span class="aiops-toggle-text">收起</span>
+                        </button>
+                    </div>
+                    <div class="aiops-module-body aiops-report-body">
+                        <div id="aiops-report" class="prose aiops-report-content md-content">
+                            <p class="aiops-report-placeholder">诊断完成后，Markdown 报告将显示在此。也可在诊断过程中查看错误信息。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ====================== Documents ====================== -->
+        <section id="tab-documents" class="tab-pane kb-page hidden">
+            <div class="kb-stats-strip aiops-stat-strip">
+                <div class="aiops-stat">
+                    <div class="aiops-stat-label">已索引文档</div>
+                    <div id="kb-stat-docs" class="aiops-stat-value">—</div>
+                    <div class="aiops-stat-sub">个 source</div>
+                </div>
+                <div class="aiops-stat">
+                    <div class="aiops-stat-label">向量 Chunk</div>
+                    <div id="kb-stat-chunks" class="aiops-stat-value">—</div>
+                    <div class="aiops-stat-sub">Milvus 分片</div>
+                </div>
+                <div class="aiops-stat">
+                    <div class="aiops-stat-label">支持格式</div>
+                    <div class="aiops-stat-value kb-stat-formats">.md · .txt</div>
+                    <div class="aiops-stat-sub">自动切分入库</div>
+                </div>
+            </div>
+
+            <div class="kb-workspace">
+                <div class="aiops-module kb-module" data-module="kb-upload">
+                    <div class="aiops-module-head">
+                        <h3>上传文档</h3>
+                    </div>
+                    <div class="aiops-module-body">
+                        <div class="kb-token-panel">
+                            <label class="label" for="kb-admin-token">管理员 Token</label>
+                            <div class="kb-token-row">
+                                <input type="password" id="kb-admin-token" class="input kb-token-input"
+                                    placeholder="与 .env 中 KB_ADMIN_TOKEN 一致" autocomplete="off">
+                                <button type="button" id="kb-token-save" class="btn-ghost">保存</button>
+                                <button type="button" id="kb-token-clear" class="btn-ghost">清除</button>
+                            </div>
+                            <p id="kb-token-status" class="kb-token-status" data-status="unknown">未配置 · 上传/删除需 Token</p>
+                        </div>
+                        <div id="upload-zone" class="kb-upload-zone">
+                            <input type="file" id="upload-input" accept=".md,.markdown,.txt" hidden>
+                            <span class="kb-upload-icon" aria-hidden="true">↑</span>
+                            <div class="kb-upload-title">点击或拖拽文件到此处</div>
+                            <div class="kb-upload-hint">支持 .md / .markdown / .txt · 自动切分并写入 Milvus</div>
+                        </div>
+                        <div id="upload-result" class="kb-upload-result" hidden></div>
+                        <div id="kb-recent-upload" class="kb-recent-upload" hidden></div>
+                    </div>
+                </div>
+
+                <div class="aiops-module kb-module kb-module--list" data-module="kb-list">
+                    <div class="aiops-module-head">
+                        <h3>已索引文档</h3>
+                        <div class="aiops-module-head-right kb-list-toolbar">
+                            <input type="search" id="kb-doc-search" class="input kb-search-input"
+                                placeholder="搜索文件名…" aria-label="搜索文档">
+                            <select id="kb-doc-sort" class="input kb-sort-select" aria-label="排序方式">
+                                <option value="name">按名称</option>
+                                <option value="chunks-desc">Chunk 多→少</option>
+                                <option value="chunks-asc">Chunk 少→多</option>
+                            </select>
+                            <button type="button" id="docs-refresh" class="btn-ghost">刷新</button>
+                        </div>
+                    </div>
+                    <div class="aiops-module-body">
+                        <div id="kb-delete-confirm" class="kb-confirm-bar hidden" role="alert"></div>
+                        <div id="docs-list" class="kb-docs-list">
+                            <span class="aiops-empty">加载中...</span>
+                        </div>
+                        <nav id="kb-pagination" class="kb-pagination hidden" aria-label="文档列表分页">
+                            <span id="kb-page-summary" class="kb-page-summary">共 0 条</span>
+                            <div class="kb-pagination-controls">
+                                <button type="button" id="kb-page-prev" class="btn-ghost kb-page-btn">上一页</button>
+                                <span id="kb-page-indicator" class="kb-page-indicator">第 1 / 1 页</span>
+                                <button type="button" id="kb-page-next" class="btn-ghost kb-page-btn">下一页</button>
+                            </div>
+                            <label class="kb-page-size-label">
+                                每页
+                                <select id="kb-page-size" class="input kb-page-size-select" aria-label="每页条数">
+                                    <option value="10" selected>10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </label>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+    </div>
+</main>
+
+<button type="button" id="assistant-fab" class="assistant-fab" title="打开知识助手" aria-expanded="false">
+    <span class="assistant-fab-icon" aria-hidden="true">💬</span>
+    <span class="assistant-fab-label">知识助手</span>
+</button>
+
+<div id="assistant-backdrop" class="assistant-backdrop hidden" aria-hidden="true"></div>
+
+<aside id="assistant-drawer" class="assistant-drawer" aria-label="知识助手" aria-hidden="true">
+    <div id="assistant-resize-handle" class="assistant-resize-handle" role="separator"
+        aria-orientation="vertical" aria-label="拖动调整抽屉宽度" title="拖动调整宽度"></div>
+    <header class="assistant-head">
+        <div class="assistant-head-text">
+            <h3>知识助手</h3>
+            <p>RAG · 可选联网 / MCP</p>
+        </div>
+        <button type="button" id="assistant-close" class="assistant-close" title="关闭">×</button>
+    </header>
+    <div class="assistant-body">
+        <div class="chat-layout">
+            <div class="chat-panel">
+                <div id="chat-messages">
+                    <div class="chat-placeholder aiops-empty">基于知识库回答运维问题 · 可开启联网与 MCP 工具</div>
+                </div>
+                <div class="chat-composer">
+                    <div class="chat-composer-box">
+                        <input id="chat-input" type="text" class="chat-composer-input"
+                            placeholder="例如: Redis 内存使用率过高怎么处理？" />
+                        <div class="chat-composer-bar">
+                            <div class="chat-composer-tools">
+                                <button type="button" id="chat-web-toggle" class="toggle chat-tool-btn off" title="联网搜索补充">
+                                    <span class="chat-tool-icon" aria-hidden="true">🌐</span>
+                                    <span>联网</span>
+                                    <span id="chat-web-state" class="chat-tool-state">关</span>
+                                </button>
+                                <button type="button" id="chat-mcp-toggle" class="toggle toggle-mcp chat-tool-btn on" title="MCP 只读工具">
+                                    <span class="chat-tool-icon" aria-hidden="true">🛠</span>
+                                    <span>MCP</span>
+                                    <span id="chat-mcp-state" class="chat-tool-state">开</span>
+                                </button>
+                            </div>
+                            <button type="button" id="chat-send" class="btn-primary chat-send-btn">发送</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="chat-hint">联网使用本地 open-webSearch；未启动时会降级提示</p>
+    </div>
+</aside>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"
+    onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js'"></script>
+<script src="/charts.js?v=20260519-kb-pagination"></script>
+<script src="/app.js?v=20260519-kb-pagination"></script>
+</body>
+</html>
